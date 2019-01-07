@@ -57,15 +57,26 @@ std::string SudokuModel::toString()
 	{
 		for (int col = 0; col < 9; col++) 
 		{
-			out += " " + m_board[row][col];
-			out += "_|";
+			if (col % 3 == 0)
+			{
+				out += "|";
+			}
+			out += " ";
+			//ASCII
+			out += '0' + m_board[row][col];			
+			out += " |";
 		}
 		out += "\n";
 		if (row > 0 && row < 9) 
 		{
+			if (row % 3 == 0)
+			{
+				out += "\n";
+			}
+			
 			for (int i = 0; i < 9; i++) 
 			{
-				out += "----";
+				//out += "----";
 			}
 			out += "\n";
 		}
