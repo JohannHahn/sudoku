@@ -1,11 +1,16 @@
 #pragma once
 #include <string>;
+#include <set>;
 
 class SudokuModel
 {
 private:
 	int m_board[9][9];
 	//Fill with zeroes
+	void clearBoard();
+	//Create new random board
+	void newBoard();
+	//Clear and create new board
 	void initBoard();
 	//Checks for zeroes/empty cells on the board
 	bool noZeroes();	
@@ -15,6 +20,10 @@ private:
 	bool checkCols();
 	//Checks if all the 3x3 blocks are valid
 	bool checkBlocks();
+	//Returns a list of candidates for a field
+	std::set<int> candidates(int x, int y);
+	//Change value of field
+	void setField(int x, int y, int value);
 
 public:
 	SudokuModel();

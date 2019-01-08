@@ -3,3 +3,9 @@
 ################################################################################
 
 /Debug
+/Sudoku/Debug/Sudoku.tlog
+/Sudoku/Debug
+/Sudoku/Sudoku.vcxproj.user
+/Sudoku/Sudoku.vcxproj.filters
+/Sudoku/Sudoku.vcxproj
+/.vs/Sudoku/v15
