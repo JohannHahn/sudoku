@@ -11,8 +11,6 @@ int independantBlocks[6][3] =
 	
 };
 
-
-
 //chooses random independant blocks
 void chooseBlocks(int b, int *blocks)
 {
@@ -49,7 +47,6 @@ void chooseBlocks(int b, int *blocks)
 	}
 	memcpy(blocks, &independantBlocks[i][0], sizeof(int) * 3);
 }
-
 
 void SudokuModel::clearBoard()
 {
@@ -91,7 +88,7 @@ void SudokuModel::newBoard()
 			int x = blocks[block] % 3 * 3 + (i % 3);
 			int y = blocks[block] / 3 * 3 + (i / 3);
 			//erase the random value from digits and write to block
-			m_board[x][y] = *it;
+			m_board[y][x] = *it;
 			digits.erase(*it);
 		}
 
@@ -111,31 +108,86 @@ void SudokuModel::initBoard()
 
 bool SudokuModel::noZeroes()
 {
-	return false;
+	for (int row = 0; row < 9; row++)
+	{
+		for (int col = 0; col < 9; col++)
+		{
+			if (m_board[row][col] == 0) return false;
+		}
+	}
+	return true;
 }
 
 bool SudokuModel::checkRows()
 {
-	return false;
+	for (int row = 0; row < 9; row++)
+	{
+		//save unique digits in row
+		std::set<int> digits = {};
+		for (int col = 0; col < 9; col++)
+		{
+			int a = m_board[row][col];
+			//duplicate digit found
+			if (a != 0 && digits.find(a) != digits.end())
+			{
+				return false;
+			}
+			//unique digit found
+			digits.insert(a);
+		}
+	}
+	return true;
 }
 
 bool SudokuModel::checkCols()
 {
-	return false;
+	for (int col = 0; col < 9; col++)
+	{
+		//save unique digits in row
+		std::set<int> digits = {};
+		for (int row = 0; row < 9; row++)
+		{
+			int a = m_board[row][col];
+			//duplicate digit
+			if (a != 0 && digits.find(a) != digits.end())
+			{
+				return false;
+			}
+			//unique digit
+			digits.insert(a);
+		}
+	}
+	return true;	
 }
 
 bool SudokuModel::checkBlocks()
 {
-	return false;
+	for (int block = 0; block < 9; block++)
+	{
+		std::set<int> digits = {};
+		for (int y = 0; y < 3; y++)
+		{
+			for (int x = 0; x < 3; x++)
+			{
+				int a = m_board[block / 3 * 3 + y][block % 3 * 3 + x];
+				if (a != 0 && digits.find(a) != digits.end())
+				{
+					return false;
+				}
+				digits.insert(a);
+			}
+		}
+	}
+	return true;	
 }
 
 std::set<int> SudokuModel::candidates(int x, int y)
 {
 	//Field not empty
-	if (m_board[x][y] != 0)
+	if (m_board[y][x] != 0)
 	{
 		printf("Field not empty!\n");
-		std::set<int> a = { m_board[x][y] };
+		std::set<int> a = { m_board[y][x] };
 		return a;
 	}
 	//At first all digits are candidated
@@ -144,12 +196,12 @@ std::set<int> SudokuModel::candidates(int x, int y)
 	//rows
 	for (int row = 0; row < 9; row++)
 	{
-		cnds.erase(m_board[x][row]);
+		cnds.erase(m_board[row][x]);
 	}	
 	//cols
 	for (int col = 0; col < 9; col++)
 	{
-		cnds.erase(m_board[col][y]);
+		cnds.erase(m_board[y][col]);
 	}
 	//block
 	int block = x / 3 + (y / 3) * 3;
@@ -167,9 +219,9 @@ std::set<int> SudokuModel::candidates(int x, int y)
 
 void SudokuModel::setField(int x, int y, int value)
 {
-	if (x >= 0 && x < 9 && y >= 0 && y < 9 && value > 0 && value < 9)
+	if (x >= 0 && x < 9 && y >= 0 && y < 9 && value > 0 && value <= 9)
 	{
-		m_board[x][y] = value;
+		m_board[y][x] = value;
 	}
 	else
 	{
@@ -207,7 +259,7 @@ std::string SudokuModel::toString()
 			}
 			out += " ";
 			//ASCII
-			out += '0' + m_board[col][row];			
+			out += '0' + m_board[row][col];			
 			out += " |";
 		}
 		out += "\n";
