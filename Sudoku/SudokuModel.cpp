@@ -1,4 +1,6 @@
 #include "SudokuModel.h"
+#include <vector>
+#include <algorithm>
 #include <stdio.h>
 #include <stdlib.h> //rand
 #include <time.h>
@@ -10,6 +12,14 @@ int independantBlocks[6][3] =
 	{1, 3, 8}, {2, 3, 7}, {2, 4, 6}
 	
 };
+
+std::vector<std::vector<std::set<int>>> oldCandidates;
+std::vector<std::set<int>> candidates;
+
+bool compareSetBySize(std::set<int> a, std::set<int> b)
+{
+	return a.size() < b.size();
+}
 
 //chooses random independant blocks
 void chooseBlocks(int b, int *blocks)
@@ -91,11 +101,28 @@ void SudokuModel::newBoard()
 			m_board[y][x] = *it;
 			digits.erase(*it);
 		}
-
 	}
+	//while (board not filled)
 	//Find candidates for each field
+	for (int row = 0; row < 9; row++)
+	{
+		for (int col = 0; col < 9; col++)
+		{
+			candidates.push_back(findCandidates(col, row));
+		}
+	}
 	//Sort empty fields by lowest candidate amout
-	//fil
+	std::sort(candidates.begin(), candidates.end(), compareSetBySize);
+
+	//if no candidates - go back to previous oldCandidates
+
+	//save current candidates to oldCandidates, might be needed later	
+	oldCandidates.push_back(candidates);
+
+	//take first candidate from first non empty candidate list and fill the field with the value
+
+	//loop back
+
 	printf("%d\n", isValid());
 }
 
@@ -181,13 +208,13 @@ bool SudokuModel::checkBlocks()
 	return true;	
 }
 
-std::set<int> SudokuModel::candidates(int x, int y)
+std::set<int> SudokuModel::findCandidates(int x, int y)
 {
 	//Field not empty
 	if (m_board[y][x] != 0)
 	{
 		printf("Field not empty!\n");
-		std::set<int> a = { m_board[y][x] };
+		std::set<int> a = {};
 		return a;
 	}
 	//At first all digits are candidated

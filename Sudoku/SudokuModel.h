@@ -21,7 +21,7 @@ private:
 	//Checks if all the 3x3 blocks are valid
 	bool checkBlocks();
 	//Returns a list of candidates for a field
-	std::set<int> candidates(int x, int y);
+	std::set<int> findCandidates(int x, int y);
 	//Change value of field
 	void setField(int x, int y, int value);
 
